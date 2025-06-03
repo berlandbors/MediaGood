@@ -77,12 +77,12 @@
                     // Показываем контент и стартуем таймер автообновления
                     window.location.href = "input.html";
                     
-                    startTimer();
+                  
                 } else {
                     document.body.innerHTML = `
-                        <h1>Добро пожаловать в MediaGood! У вас не верный ответ, попробуйте еще!</h1>
-                        <div id="timer"></div>
-                    `;
+                        <h1>Войти в MediaGood не получилось! У вас не верный ответ, попробуйте еще!</h1>
+                        <div id="timer"></div>`;
+                    startTimer();
                 }
             }
         };
