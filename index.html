@@ -75,13 +75,14 @@
                 const userAnswer = prompt(`Решите пример, если вы не бот!: ${num1} + ${num2} = ?`);
                 if (parseInt(userAnswer) === num1 + num2) {
                     // Показываем контент и стартуем таймер автообновления
-                    document.body.innerHTML = `
-                        <h1>Добро пожаловать в MediaGood!</h1>
-                        <div id="timer"></div>
-                    `;
+                    window.location.href = "input.html";
+                    
                     startTimer();
                 } else {
-                    document.body.innerHTML = "<h1>Доступ запрещен: неверный ответ</h1>";
+                    document.body.innerHTML = `
+                        <h1>Добро пожаловать в MediaGood! У вас не верный ответ, попробуйте еще!</h1>
+                        <div id="timer"></div>
+                    `;
                 }
             }
         };
