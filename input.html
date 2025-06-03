@@ -40,7 +40,7 @@ window.onload = function() {
   } else {
     const num1 = Math.floor(Math.random() * 10) + 1;
     const num2 = Math.floor(Math.random() * 10) + 1;
-    const userAnswer = prompt(`Решите пример: ${num1} + ${num2} = ?`);
+    const userAnswer = prompt(`Еще раз решите пример: ${num1} + ${num2} = ?`);
     if (parseInt(userAnswer) !== num1 + num2) {
       document.body.innerHTML = "<body style="display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0;"><h1>Ошиблись? Попробуйте еще!</h1></body>";
        
