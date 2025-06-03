@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Защищенная страница</title>
+    <title>MediaGood</title>
     <script>
         window.onload = function() {
             const botKeywords = ["bot", "Googlebot", "AdsBot", "Mediapartners-Google"];
@@ -15,7 +15,7 @@
             } else {
                 const num1 = Math.floor(Math.random() * 10) + 1;
                 const num2 = Math.floor(Math.random() * 10) + 1;
-                const userAnswer = prompt(`Решите пример: ${num1} + ${num2} = ?`);
+                const userAnswer = prompt(`Решите пример, если вы не бот!: ${num1} + ${num2} = ?`);
                 if (parseInt(userAnswer) === num1 + num2) {
                     window.location.href = "input.html"; // Замените на нужный URL
                     
@@ -27,6 +27,7 @@
     </script>
 </head>
 <body>
-    <h1>Добро пожаловать на защищенную страницу!</h1>
+    <h1>Добро пожаловать в MediaGood!</h1>
+    
 </body>
 </html>
