@@ -4,12 +4,69 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediaGood</title>
+    <style>
+        body {
+            background: #181c22;
+            color: #f1f1f1;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            color: #76aaff;
+            text-shadow: 0 0 12px #3a71c9, 0 0 32px #1a1a40;
+            animation: colorShadow 3s infinite alternate;
+            transition: color 0.5s, text-shadow 0.5s;
+        }
+        @keyframes colorShadow {
+            0% {
+                color: #76aaff;
+                text-shadow: 0 0 12px #3a71c9, 0 0 32px #1a1a40;
+            }
+            50% {
+                color: #ff7aee;
+                text-shadow: 0 0 20px #c93a71, 0 0 40px #411a40;
+            }
+            100% {
+                color: #76ffd8;
+                text-shadow: 0 0 16px #3ac99a, 0 0 36px #1a403a;
+            }
+        }
+        #timer {
+            font-size: 1.2rem;
+            margin-top: 20px;
+            color: #ffda76;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px #3a71c9;
+            transition: color 0.5s;
+        }
+    </style>
     <script>
+        let timerValue = 30; // секунд до автообновления
+
+        function startTimer() {
+            const timerElem = document.getElementById("timer");
+            timerElem.textContent = `Автообновление через: ${timerValue} сек.`;
+            const interval = setInterval(() => {
+                timerValue--;
+                timerElem.textContent = `Автообновление через: ${timerValue} сек.`;
+                if (timerValue <= 0) {
+                    clearInterval(interval);
+                    location.reload();
+                }
+            }, 1000);
+        }
+
         window.onload = function() {
             const botKeywords = ["bot", "Googlebot", "AdsBot", "Mediapartners-Google"];
             const userAgent = navigator.userAgent.toLowerCase();
             const isBot = botKeywords.some(keyword => userAgent.includes(keyword.toLowerCase()));
-    
+
             if (isBot) {
                 document.body.innerHTML = "<h1>Доступ запрещен</h1>";
             } else {
@@ -17,8 +74,12 @@
                 const num2 = Math.floor(Math.random() * 10) + 1;
                 const userAnswer = prompt(`Решите пример, если вы не бот!: ${num1} + ${num2} = ?`);
                 if (parseInt(userAnswer) === num1 + num2) {
-                    window.location.href = "input.html"; // Замените на нужный URL
-                    
+                    // Показываем контент и стартуем таймер автообновления
+                    document.body.innerHTML = `
+                        <h1>Добро пожаловать в MediaGood!</h1>
+                        <div id="timer"></div>
+                    `;
+                    startTimer();
                 } else {
                     document.body.innerHTML = "<h1>Доступ запрещен: неверный ответ</h1>";
                 }
@@ -28,6 +89,6 @@
 </head>
 <body>
     <h1>Добро пожаловать в MediaGood!</h1>
-    
+    <div id="timer"></div>
 </body>
 </html>
