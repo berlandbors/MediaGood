@@ -221,7 +221,7 @@ closePlayerBtn.addEventListener('click', closePlayerModalHandler);
 function closePlayerModalHandler() {
   playerModal.style.display = 'none';
   // Останавливаем все медиа
-  const mediaElements = modalPlayerContainer.querySelectorAll('video, audio');
+  const mediaElements = modalPlayerContainer.querySelectorAll('video, audio, iframe');
   mediaElements.forEach(media => {
     media.pause();
     media.currentTime = 0;
