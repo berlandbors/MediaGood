@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Защищенная страница</title>
+    <script>
+        window.onload = function() {
+            const botKeywords = ["bot", "Googlebot", "AdsBot", "Mediapartners-Google"];
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isBot = botKeywords.some(keyword => userAgent.includes(keyword.toLowerCase()));
+    
+            if (isBot) {
+                document.body.innerHTML = "<h1>Доступ запрещен</h1>";
+            } else {
+                const num1 = Math.floor(Math.random() * 10) + 1;
+                const num2 = Math.floor(Math.random() * 10) + 1;
+                const userAnswer = prompt(`Решите пример: ${num1} + ${num2} = ?`);
+                if (parseInt(userAnswer) === num1 + num2) {
+                    window.location.href = "input.html"; // Замените на нужный URL
+                    
+                } else {
+                    document.body.innerHTML = "<h1>Доступ запрещен: неверный ответ</h1>";
+                }
+            }
+        };
+    </script>
+</head>
+<body>
+    <h1>Добро пожаловать на защищенную страницу!</h1>
+</body>
+</html>

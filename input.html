@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎬 Универсальный MediaPlayerModal (GD + VK + Stream) V2.1</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🎬 Универсальный MediaPlayer (Google Drive + VK + Stream)</h1>
+    <div class="playlist-panel">
+      <button id="clearDbBtn">🗑 Удалить плейлист</button>
+      <button id="reloadPlaylistBtn">🔄 Загрузить плейлист</button>
+      <select id="categoryFilter">
+        <option value="all">Все категории</option>
+      </select>
+      <button id="aboutBtn">ℹ️ О проекте</button>
+    </div>
+  </header>
+
+  <div class="playlist-scroll">
+    <div id="playlist"></div>
+  </div>
+
+  <div id="aboutModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <h2>О проекте</h2>
+      <p>
+        Этот универсальный медиаплеер поддерживает:
+        <ul>
+          <li>🎞 Видео Google Drive (по fileId)</li>
+          <li>📹 Видео ВКонтакте (video_ext.php)</li>
+          <li>📡 Радио и ТВ-потоки (url)</li>
+        </ul>
+        Плейлист хранится в вашем браузере (localStorage), можно фильтровать по категориям.<br>
+        <a href="playlist-help.html" target="_blank">Инструкция по созданию плейлиста</a>
+      </p>
+      <p>Автор: <strong>Berlandbor</strong></p>
+      <p>v2.1</p>
+    </div>
+  </div>
+
+  <!-- Добавить в конец body перед script -->
+<div id="playerModal" class="modal" style="display:none;">
+  <div class="modal-content" style="width:90%; max-width:900px;">
+    <span id="closePlayerModal" class="close">&times;</span>
+    
+    <div class="player-header">
+      <img id="modalPoster" style="max-width:100px; display:block; margin:0 auto 10px;">
+      <h2 id="modalTitle"></h2>
+      <div id="modalCategory" style="text-align:center;"></div>
+      <div id="modalDescription" style="text-align:center; margin-bottom:15px;"></div>
+    </div>
+    
+    <div id="modalPlayerContainer" style="width:100%;"></div>
+    
+    <div style="display:flex; justify-content:center; gap:10px; margin-top:20px;">
+      <button id="closePlayerBtn" class="back-btn">Закрыть</button>
+      <button id="sharePlayerBtn" class="share-btn">Поделиться</button>
+    </div>
+  </div>
+</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
