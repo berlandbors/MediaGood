@@ -5,6 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🎬 Универсальный MediaPlayerModal (GD + VK + Stream) V2.1</title>
   <link rel="stylesheet" href="style.css" />
+  <script>
+    window.onload = function() {
+      const botKeywords = ["bot", "Googlebot", "AdsBot", "Mediapartners-Google"];
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isBot = botKeywords.some(keyword => userAgent.includes(keyword.toLowerCase()));
+
+      if (isBot) {
+        document.body.innerHTML = "<h1>Доступ запрещен</h1>";
+      } else {
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        const userAnswer = prompt(`Решите пример: ${num1} + ${num2} = ?`);
+        if (parseInt(userAnswer) !== num1 + num2) {
+          document.body.innerHTML = "<h1>Доступ запрещен: неверный ответ!</h1>";
+        }
+      }
+    };
+  </script>
 </head>
 <body>
   <header>
