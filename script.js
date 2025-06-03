@@ -220,12 +220,24 @@ closePlayerModal.addEventListener('click', closePlayerModalHandler);
 closePlayerBtn.addEventListener('click', closePlayerModalHandler);
 function closePlayerModalHandler() {
   playerModal.style.display = 'none';
-  // Останавливаем все медиа
-  const mediaElements = modalPlayerContainer.querySelectorAll('video, audio, iframe');
+  const mediaElements = modalPlayerContainer.querySelectorAll('video, audio');
   mediaElements.forEach(media => {
-    media.pause();
-    media.currentTime = 0;
+    if (typeof media.pause === 'function') {
+      media.pause();
+    }
+    if ('currentTime' in media) {
+      media.currentTime = 0;
+    }
   });
+  // Для iframe — удаляем их из DOM, чтобы точно остановить проигрывание
+  const iframeElements = modalPlayerContainer.querySelectorAll('iframe');
+  iframeElements.forEach(iframe => {
+    iframe.src = ''; // сбрасываем src
+    iframe.remove(); // или просто modalPlayerContainer.innerHTML = ''
+    modalPlayerContainer.innerHTML = '';
+  });
+  // Также можно полностью очистить контейнер:
+   modalPlayerContainer.innerHTML = '';
 }
 
 // Обработчик для кнопки "Поделиться"
