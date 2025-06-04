@@ -4,112 +4,168 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🎬 MediaPlayerModal (GD + VK + Stream) V2.1</title>
-  <link rel="stylesheet" href="style.css" />
- <script>
-window.onload = function() {
-  const botKeywords = ["bot", "Googlebot", "AdsBot", "Mediapartners-Google"];
-  const userAgent = navigator.userAgent.toLowerCase();
-  const isBot = botKeywords.some(keyword => userAgent.includes(keyword.toLowerCase()));
 
-  function startTimer() {
-    let timerSeconds = 10;
-    let timerDiv = document.createElement('div');
-    timerDiv.style.position = 'fixed';
-    timerDiv.style.bottom = '10px';
-    timerDiv.style.right = '10px';
-    timerDiv.style.background = '#000000';
-    timerDiv.style.padding = '10px';
-    timerDiv.style.borderRadius = '8px';
-    timerDiv.style.fontSize = '16px';
-    document.body.appendChild(timerDiv);
-
-    function updateTimer() {
-      timerDiv.textContent = `Страница обновится через ${timerSeconds--} сек.`;
-      if (timerSeconds < 0) {
-        location.reload();
-      } else {
-        setTimeout(updateTimer, 1000);
-      }
+  <style>
+    #captchaOverlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.95);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      font-family: sans-serif;
     }
-    updateTimer();
-  }
 
-  if (isBot) {
-    document.body.innerHTML = "<h1>Доступ запрещен</h1>";
-    startTimer(); // Можно оставить, если нужно обновлять и для бота
-  } else {
-    const num1 = Math.floor(Math.random() * 10) + 1;
-    const num2 = Math.floor(Math.random() * 10) + 1;
-    const userAnswer = prompt(`Еще раз решите пример: ${num1} + ${num2} = ?`);
-    if (parseInt(userAnswer) !== num1 + num2) {
-      document.body.innerHTML = "<h1>Ошиблись? Попробуйте еще!</h1>";
-       
-
-      startTimer(); // Автообновление только при ошибке
+    #captchaOverlay input {
+      font-size: 1.2rem;
+      padding: 8px 16px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
     }
-    // Если ответ правильный — ничего не делаем, автообновление не запускается
-  }
-};
-</script>
-  
+
+    #captchaError {
+      color: red;
+      margin-top: 10px;
+      display: none;
+    }
+
+    body.blocked {
+      overflow: hidden;
+    }
+  </style>
 </head>
-<body>
-  
-  <header>
-    <h1>🎬 MediaPlayerModal (Google Drive + VK + Stream) V2.1</h1>
-    <div class="playlist-panel">
-      <button id="clearDbBtn">🗑 Удалить плейлист</button>
-      <button id="reloadPlaylistBtn">🔄 Обновить плейлист</button>
-      <select id="categoryFilter">
-        <option value="all">Все категории</option>
-      </select>
-      <button id="aboutBtn">ℹ️ О проекте</button>
-    </div>
-  </header>
+<body class="blocked">
 
-  <div class="playlist-scroll">
-    <div id="playlist"></div>
+  <!-- Капча -->
+  <div id="captchaOverlay">
+    <h2>Проверка доступа</h2>
+    <p>Чтобы продолжить, решите пример ниже:</p>
+   
+    <p id="captchaQuestion">Загрузка...</p>
+    <input type="number" id="captchaInput" placeholder="Введите ответ" /> 
+    <div id="captchaError">Неверно! Попробуйте ещё.</div>
+    <p>После проверки, загрузите плейлист 🔃!</p>
   </div>
 
-  <div id="aboutModal" class="modal" style="display:none;">
-    <div class="modal-content">
-      <span id="closeModal" class="close">&times;</span>
-      <h2>О проекте</h2>
-      <p>
-        Этот универсальный медиаплеер поддерживает:
-        <ul>
-          <li>🎞 Видео Google Drive (по fileId)</li>
-          <li>📹 Видео ВКонтакте (video_ext.php)</li>
-          <li>📡 Радио и ТВ-потоки (url)</li>
-        </ul>
-       
-      </p>
-      <p>Автор: <strong>Berlandbor</strong></p>
-      <p>v2.1</p>
-    </div>
-  </div>
+  <!-- Основной шаблон страницы -->
+  <template id="pageContent">
+    <link rel="stylesheet" href="style.css" />
+    <header>
+      <h1>🎬 MediaPlayerModal (Google Drive + VK + Stream) V2.1</h1>
+      <div class="playlist-panel">
+        <button id="clearDbBtn">🗑 Удалить плейлист</button>
+        <button id="reloadPlaylistBtn">🔃 загрузить плейлист</button>
+        <select id="categoryFilter">
+          <option value="all">Все категории</option>
+        </select>
+        <button id="aboutBtn">ℹ️ О проекте</button>
+      </div>
+    </header>
 
-  <!-- Добавить в конец body перед script -->
-<div id="playerModal" class="modal" style="display:none;">
-  <div class="modal-content" style="width:90%; max-width:900px;">
-    <span id="closePlayerModal" class="close">&times;</span>
-    
-    <div class="player-header">
-      <img id="modalPoster" style="max-width:100px; display:block; margin:0 auto 10px;">
-      <h2 id="modalTitle"></h2>
-      <div id="modalCategory" style="text-align:center;"></div>
-      <div id="modalDescription" style="text-align:center; margin-bottom:15px;"></div>
+    <div class="playlist-scroll">
+      <div id="playlist"></div>
     </div>
-    
-    <div id="modalPlayerContainer" style="width:100%;"></div>
-    
-    <div style="display:flex; justify-content:center; gap:10px; margin-top:20px;">
-      <button id="closePlayerBtn" class="back-btn">Закрыть</button>
-      <button id="sharePlayerBtn" class="share-btn">Поделиться</button>
-    </div>
-  </div>
-</div>
 
-  <script src="script.js"></script>
+    <div id="aboutModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span id="closeModal" class="close">&times;</span>
+        <h2>О проекте</h2>
+        <p>
+          Этот универсальный медиаплеер поддерживает:
+          <ul>
+            <li>🎞 Видео Google Drive (по fileId)</li>
+            <li>📹 Видео ВКонтакте (video_ext.php)</li>
+            <li>📡 Радио и ТВ-потоки (url)</li>
+          </ul>
+        </p>
+        <p>Автор: <strong>Berlandbor</strong></p>
+        <p>v2.1</p>
+      </div>
+    </div>
+
+    <div id="playerModal" class="modal" style="display:none;">
+      <div class="modal-content" style="width:90%; max-width:900px;">
+        <span id="closePlayerModal" class="close">&times;</span>
+
+        <div class="player-header">
+          <img id="modalPoster" style="max-width:100px; display:block; margin:0 auto 10px;">
+          <h2 id="modalTitle"></h2>
+          <div id="modalCategory" style="text-align:center;"></div>
+          <div id="modalDescription" style="text-align:center; margin-bottom:15px;"></div>
+        </div>
+
+        <div id="modalPlayerContainer" style="width:100%;"></div>
+
+        <div style="display:flex; justify-content:center; gap:10px; margin-top:20px;">
+          <button id="closePlayerBtn" class="back-btn">Закрыть</button>
+          <button id="sharePlayerBtn" class="share-btn">Поделиться</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js" defer></script>
+  </template>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const botKeywords = ["bot", "googlebot", "adsbot", "mediapartners-google"];
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isBot = botKeywords.some(keyword => userAgent.includes(keyword));
+
+      if (isBot) {
+        document.body.innerHTML = "<h1 style='text-align:center; color:red;'>Доступ запрещён</h1>";
+        return;
+      }
+
+      // Капча
+      const num1 = Math.floor(Math.random() * 10) + 1;
+      const num2 = Math.floor(Math.random() * 10) + 1;
+      const correctAnswer = num1 + num2;
+
+      document.getElementById("captchaQuestion").textContent = `Решите пример: ${num1} + ${num2} = ?`;
+      const input = document.getElementById("captchaInput");
+      const error = document.getElementById("captchaError");
+
+      input.focus();
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const userAnswer = parseInt(input.value.trim());
+          if (userAnswer === correctAnswer) {
+            // Удаляем капчу
+            document.getElementById("captchaOverlay").remove();
+            document.body.classList.remove("blocked");
+
+            // Вставляем контент из template
+            const template = document.getElementById("pageContent");
+            document.body.insertAdjacentHTML("beforeend", template.innerHTML);
+
+              // Повторное подключение style.css
+              const cssLink = document.querySelector('link[href="style.css"]');
+              if (!cssLink) {
+                const link = document.createElement('link');
+                link.rel = "stylesheet";
+                link.href = "style.css";
+                document.head.appendChild(link);
+              }
+
+              // Подключаем script.js повторно
+const script = document.createElement("script");
+script.src = "script.js";
+document.body.appendChild(script);
+
+            } else {
+              error.style.display = "block";
+            }
+        }
+      });
+    });
+  </script>
 </body>
 </html>
