@@ -259,7 +259,7 @@ sharePlayerBtn.addEventListener('click', function() {
     navigator.share({
       title: title,
       text: text,
-      url: window.location.href
+      url: window.location.href = "https://github.com/berlandbors/MediaPlayerModal-GDVKS";
     }).catch(() => {});
   } else {
     navigator.clipboard.writeText(text).then(() => {
