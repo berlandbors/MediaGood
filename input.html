@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🎬 MediaPlayerModal (GD + VK + Stream) V2.1</title>
   <link rel="stylesheet" href="style.css" />
- <script>
+ <!--<script>
 window.onload = function() {
   const botKeywords = ["bot", "Googlebot", "AdsBot", "Mediapartners-Google"];
   const userAgent = navigator.userAgent.toLowerCase();
@@ -50,9 +50,103 @@ window.onload = function() {
     // Если ответ правильный — ничего не делаем, автообновление не запускается
   }
 };
-</script>
+</script>-->
+  
 </head>
 <body>
+   <style>
+    html.locked, body.locked { overflow: hidden; height: 100%; }
+    #preCheckScreen {
+      position: fixed; z-index: 9999; left:0; top:0; right:0; bottom:0;
+      background: rgba(0,0,0,0.75); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-family: sans-serif;
+    }
+    #preCheckBox {
+      background: #222; padding: 30px; border-radius: 12px; text-align: center;
+      min-width: 250px;
+    }
+    #preCheckBox input { font-size: 1.2em; margin: 10px 0; }
+    #preCheckBox button { font-size: 1.1em; }
+    #timerDiv {
+      margin-top: 20px;
+      font-size: 1.1em;
+      color: #ff8080;
+    }
+  </style>
+  <script>
+    // Блокируем отображение содержимого до проверки
+    document.documentElement.classList.add('locked');
+    document.body.classList.add('locked');
+
+    function startTimer(callback, seconds = 10, message = "Страница обновится через") {
+      let timerDiv = document.getElementById("timerDiv");
+      if (!timerDiv) {
+        timerDiv = document.createElement('div');
+        timerDiv.id = "timerDiv";
+        document.getElementById("preCheckBox").appendChild(timerDiv);
+      }
+      function update() {
+        timerDiv.textContent = `${message} ${seconds--} сек.`;
+        if (seconds < 0) callback();
+        else setTimeout(update, 1000);
+      }
+      update();
+    }
+
+    window.onload = function() {
+      const botKeywords = ["bot", "Googlebot", "AdsBot", "Mediapartners-Google"];
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isBot = botKeywords.some(keyword => userAgent.includes(keyword.toLowerCase()));
+      // Создаем модальное окно проверки
+      const preScreen = document.createElement("div");
+      preScreen.id = "preCheckScreen";
+      let innerHTML = "";
+
+      if (isBot) {
+        innerHTML = `<div id="preCheckBox">
+          <h2>Доступ запрещен</h2>
+          <div id="timerDiv"></div>
+        </div>`;
+        preScreen.innerHTML = innerHTML;
+        document.body.appendChild(preScreen);
+        startTimer(() => location.reload(), 10);
+        return;
+      }
+
+      // Если не бот — капча-пример
+      const num1 = Math.floor(Math.random() * 10) + 1;
+      const num2 = Math.floor(Math.random() * 10) + 1;
+      innerHTML = `<div id="preCheckBox">
+        <div>Решите пример: <b>${num1} + ${num2} = ?</b></div>
+        <input id="captchaInput" type="number" autofocus />
+        <button id="captchaBtn">OK</button>
+        <div id="timerDiv" style="display:none"></div>
+      </div>`;
+      preScreen.innerHTML = innerHTML;
+      document.body.appendChild(preScreen);
+
+      function failCaptcha() {
+        document.getElementById("preCheckBox").innerHTML = `<h2>Ошиблись? Попробуйте еще!</h2><div id="timerDiv"></div>`;
+        startTimer(() => location.reload(), 10, "Повтор через");
+      }
+
+      document.getElementById("captchaBtn").onclick = function() {
+        const answer = parseInt(document.getElementById("captchaInput").value, 10);
+        if (answer === num1 + num2) {
+          preScreen.remove();
+          document.documentElement.classList.remove('locked');
+          document.body.classList.remove('locked');
+        } else {
+          failCaptcha();
+        }
+      };
+
+      document.getElementById("captchaInput").onkeydown = function(e) {
+        if (e.key === "Enter") document.getElementById("captchaBtn").click();
+      };
+    };
+  </script>
   <header>
     <h1>🎬 MediaPlayerModal (Google Drive + VK + Stream) V2.1</h1>
     <div class="playlist-panel">
