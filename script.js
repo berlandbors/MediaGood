@@ -255,15 +255,17 @@ sharePlayerBtn.addEventListener('click', function() {
   if (desc) text += `${desc}\n`;
   if (poster) text += `Постер: ${poster}\n`;
   
-  if (navigator.share) {
-    navigator.share({
-      title: title,
-      text: text,
-      url: window.location.href
-    }).catch(() => {});
-  } else {
-    navigator.clipboard.writeText(text).then(() => {
-      alert('Информация о медиа скопирована!');
-    });
-  }
+  const shareUrl = `смотри: ${window.location.href}`;
+
+if (navigator.share) {
+  navigator.share({
+    title: title,
+    text: text,
+    url: shareUrl
+  }).catch(() => {});
+} else {
+  navigator.clipboard.writeText(text + shareUrl).then(() => {
+    alert('Информация о медиа скопирована!');
+  });
+}
 });
