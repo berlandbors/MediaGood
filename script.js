@@ -253,18 +253,16 @@ sharePlayerBtn.addEventListener('click', function() {
   if (title) text += `🎬 ${title}\n`;
   if (cat) text += `Категория: ${cat}\n`;
   if (desc) text += `${desc}\n`;
-  if (poster) text += `Постер: ${poster}\n`;
+  if (poster) text += `Постер: ${poster}\n СМОТРИ ЗДЕСЬ:`;
   
-  const shareUrl = `смотри: ${window.location.href}`;
-
-if (navigator.share) {
+  if (navigator.share) {
   navigator.share({
     title: title,
     text: text,
-    url: shareUrl
+    url: window.location.href
   }).catch(() => {});
 } else {
-  navigator.clipboard.writeText(text + shareUrl).then(() => {
+  navigator.clipboard.writeText(text).then(() => {
     alert('Информация о медиа скопирована!');
   });
 }
