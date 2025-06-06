@@ -253,7 +253,7 @@ sharePlayerBtn.addEventListener('click', function() {
   if (title) text += `🎬 ${title}\n`;
   if (poster) text += `Постер: ${poster}\n`;
   if (cat) text += `Категория: ${cat}\n`;
-  if (desc) text += `${desc}\n❗❗❗СМОТРИ 👀 ЗДЕСЬ:\n`;
+  if (desc) text += `Описание: ${desc}\n❗❗❗СМОТРИ 👀 ЗДЕСЬ⤵️:\n`;
   
   
   if (navigator.share) {
