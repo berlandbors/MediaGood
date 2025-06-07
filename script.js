@@ -187,8 +187,9 @@ function showPlayerInModal(item) {
     else if (item.url.endsWith('.m3u8')) {
       playerHTML = `
         <video controls autoplay src="${item.url}" 
-               style="width:100%; max-width:720px; background:#000;" 
-               poster="${item.poster || ''}"></video>
+       style="display:block; margin:0 auto; width:100%; max-width:720px; background:#000;" 
+       poster="${item.poster || ''}">
+</video>
         <div style="color:#fff; font-size:0.95em; margin-top:8px;">
           <b>Внимание:</b> Если поток не играет, попробуйте открыть в мобильном Chrome или Safari.
         </div>`;
