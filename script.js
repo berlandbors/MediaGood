@@ -31,21 +31,22 @@ window.addEventListener("DOMContentLoaded", () => {
       updateFilterOptions([]);
       renderPlaylist([]);
     }
-  } else {
-    fetch("playlist.json")
-      .then(res => res.json())
-      .then(data => {
-        currentPlaylist = data;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        updateFilterOptions(data);
-        renderPlaylist(data);
-      })
-      .catch(err => {
-        console.error("Ошибка загрузки плейлиста:", err);
-        playlistContainer.innerHTML = "<p>❌ Не удалось загрузить плейлист.</p>";
-      });
-  }
-});
+   } else {
+  fetch("playlists.json")
+    .then(res => res.json())
+    .then(files => Promise.all(files.map(file => fetch(file).then(r => r.json()))))
+    .then(playlistsArrays => {
+      const combined = playlistsArrays.flat();
+      currentPlaylist = combined;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(combined));
+      updateFilterOptions(combined);
+      renderPlaylist(combined);
+    })
+    .catch(err => {
+      console.error("Ошибка загрузки плейлистов:", err);
+      playlistContainer.innerHTML = "<p>❌ Не удалось загрузить плейлисты.</p>";
+    });
+}
 
 // --- Кнопка очистки плейлиста ---
 clearDbBtn.addEventListener("click", () => {
