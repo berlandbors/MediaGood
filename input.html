@@ -4,13 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>🎬 MediaGood V2.1</title>
-
+  <link rel="stylesheet" href="style.css" />
   <style>
+    body.blocked .blur-wrap {
+      filter: blur(7px);
+      pointer-events: none;
+      user-select: none;
+      transition: filter 0.3s;
+    }
     #captchaOverlay {
       position: fixed;
       top: 0; left: 0;
       width: 100vw; height: 100vh;
-      background: rgba(0, 0, 0, 0.95);
+      background: rgba(0, 0, 0, 0.90);
       color: #fff;
       display: flex;
       flex-direction: column;
@@ -19,7 +25,6 @@
       z-index: 9999;
       font-family: sans-serif;
     }
-
     #captchaOverlay input {
       font-size: 1.2rem;
       padding: 8px 16px;
@@ -28,13 +33,11 @@
       border: none;
       outline: none;
     }
-
     #captchaError {
       color: red;
       margin-top: 10px;
       display: none;
     }
-
     body.blocked {
       overflow: hidden;
     }
@@ -46,16 +49,14 @@
   <div id="captchaOverlay">
     <h2>Проверка доступа</h2>
     <p>Чтобы продолжить, решите пример ниже:</p>
-   
     <p id="captchaQuestion">Загрузка...</p>
-    <input type="number" id="captchaInput" placeholder="Введите ответ" /> 
+    <input type="number" id="captchaInput" placeholder="Введите ответ" autocomplete="off" />
     <div id="captchaError">Неверно! Попробуйте ещё.</div>
-    <p>После проверки, загрузите плейлист 🔃!</p>
+    <p>После проверки страница станет активной 🔃!</p>
   </div>
 
-  <!-- Основной шаблон страницы -->
-  <template id="pageContent">
-    <link rel="stylesheet" href="style.css" />
+  <!-- Весь остальной контент страницы -->
+  <div class="blur-wrap">
     <header>
       <h1>🎬 MediaGood V2.1</h1>
       <div class="playlist-panel">
@@ -93,37 +94,23 @@
     <div id="playerModal" class="modal" style="display:none;">
       <div class="modal-content" style="width:90%; max-width:900px;">
         <span id="closePlayerModal" class="close">&times;</span>
-
         <div class="player-header">
           <img id="modalPoster" style="max-width:100px; display:block; margin:0 auto 10px;">
           <h2 id="modalTitle"></h2>
           <div id="modalCategory" style="text-align:center;"></div>
           <div id="modalDescription" style="text-align:center; margin-bottom:15px;"></div>
         </div>
-
         <div id="modalPlayerContainer" style="width:100%;"></div>
-
         <div style="display:flex; justify-content:center; gap:10px; margin-top:20px;">
           <button id="closePlayerBtn" class="back-btn">Закрыть</button>
           <button id="sharePlayerBtn" class="share-btn">Поделиться</button>
         </div>
       </div>
     </div>
-
-    <script src="script.js" defer></script>
-  </template>
+  </div>
 
   <script>
     window.addEventListener("DOMContentLoaded", () => {
-      const botKeywords = ["bot", "googlebot", "adsbot", "mediapartners-google"];
-      const userAgent = navigator.userAgent.toLowerCase();
-      const isBot = botKeywords.some(keyword => userAgent.includes(keyword));
-
-      if (isBot) {
-        document.body.innerHTML = "<h1 style='text-align:center; color:red;'>Доступ запрещён</h1>";
-        return;
-      }
-
       // Капча
       const num1 = Math.floor(Math.random() * 10) + 1;
       const num2 = Math.floor(Math.random() * 10) + 1;
@@ -139,34 +126,16 @@
         if (e.key === "Enter") {
           const userAnswer = parseInt(input.value.trim());
           if (userAnswer === correctAnswer) {
-            // Удаляем капчу
+            // Удаляем overlay-капчу
             document.getElementById("captchaOverlay").remove();
             document.body.classList.remove("blocked");
-
-            // Вставляем контент из template
-            const template = document.getElementById("pageContent");
-            document.body.insertAdjacentHTML("beforeend", template.innerHTML);
-
-              // Повторное подключение style.css
-              const cssLink = document.querySelector('link[href="style.css"]');
-              if (!cssLink) {
-                const link = document.createElement('link');
-                link.rel = "stylesheet";
-                link.href = "style.css";
-                document.head.appendChild(link);
-              }
-
-              // Подключаем script.js повторно
-const script = document.createElement("script");
-script.src = "script.js";
-document.body.appendChild(script);
-
-            } else {
-              error.style.display = "block";
-            }
+          } else {
+            error.style.display = "block";
+          }
         }
       });
     });
   </script>
+  <script src="script.js" defer></script>
 </body>
 </html>
