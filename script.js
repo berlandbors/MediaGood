@@ -17,7 +17,7 @@ const closePlayerBtn = document.getElementById('closePlayerBtn');
 const sharePlayerBtn = document.getElementById('sharePlayerBtn');
 let currentMediaItem = null; // Текущий выбранный элемент
 
-// --- Загрузка плейлиста при старте ---
+// --- Загрузка плейлистов при старте ---
 window.addEventListener("DOMContentLoaded", () => {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
@@ -31,22 +31,10 @@ window.addEventListener("DOMContentLoaded", () => {
       updateFilterOptions([]);
       renderPlaylist([]);
     }
-   } else {
-  fetch("playlists.json")
-    .then(res => res.json())
-    .then(files => Promise.all(files.map(file => fetch(file).then(r => r.json()))))
-    .then(playlistsArrays => {
-      const combined = playlistsArrays.flat();
-      currentPlaylist = combined;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(combined));
-      updateFilterOptions(combined);
-      renderPlaylist(combined);
-    })
-    .catch(err => {
-      console.error("Ошибка загрузки плейлистов:", err);
-      playlistContainer.innerHTML = "<p>❌ Не удалось загрузить плейлисты.</p>";
-    });
-}
+  } else {
+    loadAllPlaylists();
+  }
+});
 
 // --- Кнопка очистки плейлиста ---
 clearDbBtn.addEventListener("click", () => {
@@ -56,21 +44,11 @@ clearDbBtn.addEventListener("click", () => {
   updateFilterOptions([]);
 });
 
-// --- Кнопка загрузки плейлиста ---
+// --- Кнопка загрузки всех плейлистов ---
 reloadBtn.addEventListener('click', () => {
-  fetch('playlists.json')
-    .then(res => res.json())
-    .then(files => Promise.all(files.map(file => fetch(file).then(r => r.json()))))
-    .then(playlistsArrays => {
-      const combined = playlistsArrays.flat();
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(combined));
-      currentPlaylist = combined;
-      renderPlaylist(combined);
-      updateFilterOptions(combined);
-      alert('Плейлист обновлён!');
-    })
-    .catch(() => alert('Ошибка загрузки плейлистов!'));
+  loadAllPlaylists(true);
 });
+
 // --- Фильтр по категориям ---
 categoryFilter.addEventListener("change", () => {
   const selected = categoryFilter.value;
@@ -81,6 +59,26 @@ categoryFilter.addEventListener("change", () => {
     renderPlaylist(filtered);
   }
 });
+
+// --- Загрузка и объединение всех плейлистов из playlists.json ---
+function loadAllPlaylists(showAlert) {
+  fetch('playlists.json')
+    .then(res => res.json())
+    .then(files => Promise.all(files.map(file => fetch(file).then(r => r.json()))))
+    .then(playlistsArrays => {
+      const combined = playlistsArrays.flat();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(combined));
+      currentPlaylist = combined;
+      updateFilterOptions(combined);
+      renderPlaylist(combined);
+      if (showAlert) alert('Плейлисты обновлены!');
+    })
+    .catch(err => {
+      playlistContainer.innerHTML = "<p>❌ Не удалось загрузить плейлисты.</p>";
+      console.error("Ошибка загрузки плейлистов:", err);
+      if (showAlert) alert('Ошибка загрузки плейлистов!');
+    });
+}
 
 function getTileType(item) {
   if (item.vk_oid && item.vk_id && item.vk_hash) return "vk";
@@ -114,8 +112,7 @@ function renderPlaylist(items) {
         }
       </div>
     `;
-    
-    // Обработчик клика - открываем модальное окно с плеером
+
     tile.addEventListener("click", () => {
       showPlayerInModal(item);
     });
@@ -150,24 +147,17 @@ window.addEventListener('click', e => {
 });
 
 // --- Функции для работы с плеером в модальном окне ---
-
-// Отображение плеера в модальном окне
 function showPlayerInModal(item) {
   currentMediaItem = item;
-  
-  // Очищаем предыдущий плеер
   modalPlayerContainer.innerHTML = '';
-  
-  // Устанавливаем метаданные
   modalTitle.textContent = item.title || 'Без названия';
   modalCategory.textContent = item.category || 'Без категории';
   modalDescription.textContent = item.description || '';
   modalPoster.src = item.poster || getDefaultPoster(item);
-  
-  // Создаем плеер в зависимости от типа
+
   const type = getTileType(item);
   let playerHTML = '';
-  
+
   if (type === "vk") {
     playerHTML = `
       <div class="video-responsive">
@@ -191,7 +181,7 @@ function showPlayerInModal(item) {
         <video controls autoplay src="${item.url}" 
        style="display:block; margin:0 auto; width:100%; max-width:720px; background:#000;" 
        poster="${item.poster || ''}">
-</video>
+      </video>
         <div style="color:#fff; font-size:0.95em; margin-top:8px;">
           <b>Внимание:</b> Если поток не играет, попробуйте открыть в мобильном Chrome или Safari.
         </div>`;
@@ -199,18 +189,13 @@ function showPlayerInModal(item) {
     else {
       playerHTML = `<iframe src="${item.url}" frameborder="0" allowfullscreen style="width:100%; min-height:360px; background:#000;"></iframe>`;
     }
-    
     playerHTML = `<div class="video-responsive">${playerHTML}</div>`;
   }
-  
-  // Вставляем плеер
+
   modalPlayerContainer.innerHTML = playerHTML;
-  
-  // Показываем модальное окно
   playerModal.style.display = 'flex';
 }
 
-// Получение постера по умолчанию
 function getDefaultPoster(item) {
   const type = getTileType(item);
   if (type === "gd" && item.id) return `https://drive.google.com/thumbnail?id=${item.id}`;
@@ -225,49 +210,39 @@ function closePlayerModalHandler() {
   playerModal.style.display = 'none';
   const mediaElements = modalPlayerContainer.querySelectorAll('video, audio');
   mediaElements.forEach(media => {
-    if (typeof media.pause === 'function') {
-      media.pause();
-    }
-    if ('currentTime' in media) {
-      media.currentTime = 0;
-    }
+    if (typeof media.pause === 'function') media.pause();
+    if ('currentTime' in media) media.currentTime = 0;
   });
-  // Для iframe — удаляем их из DOM, чтобы точно остановить проигрывание
   const iframeElements = modalPlayerContainer.querySelectorAll('iframe');
   iframeElements.forEach(iframe => {
-    iframe.src = ''; // сбрасываем src
-    iframe.remove(); // или просто modalPlayerContainer.innerHTML = ''
+    iframe.src = '';
+    iframe.remove();
     modalPlayerContainer.innerHTML = '';
   });
-  // Также можно полностью очистить контейнер:
-   modalPlayerContainer.innerHTML = '';
+  modalPlayerContainer.innerHTML = '';
 }
 
 // Обработчик для кнопки "Поделиться"
 sharePlayerBtn.addEventListener('click', function() {
   if (!currentMediaItem) return;
-  
   const title = modalTitle.textContent;
   const desc = modalDescription.textContent;
   const cat = modalCategory.textContent;
   const poster = modalPoster.src || '';
-  
   let text = '';
   if (title) text += `🎬 ${title}\n`;
   if (poster) text += `Постер: ${poster}\n`;
   if (cat) text += `Категория: ${cat}\n`;
   if (desc) text += `Описание: ${desc}\n❗❗❗СМОТРИ 👀 ЗДЕСЬ⤵️:\n`;
-  
-  
   if (navigator.share) {
-  navigator.share({
-    title: title,
-    text: text,
-    url: window.location.href
-  }).catch(() => {});
-} else {
-  navigator.clipboard.writeText(text).then(() => {
-    alert('Информация о медиа скопирована!');
-  });
-}
+    navigator.share({
+      title: title,
+      text: text,
+      url: window.location.href
+    }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Информация о медиа скопирована!');
+    });
+  }
 });
