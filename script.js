@@ -60,16 +60,17 @@ clearDbBtn.addEventListener("click", () => {
 reloadBtn.addEventListener('click', () => {
   fetch('playlists.json')
     .then(res => res.json())
-    .then(data => {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      currentPlaylist = data;
-      renderPlaylist(data);
-      updateFilterOptions(data);
+    .then(files => Promise.all(files.map(file => fetch(file).then(r => r.json()))))
+    .then(playlistsArrays => {
+      const combined = playlistsArrays.flat();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(combined));
+      currentPlaylist = combined;
+      renderPlaylist(combined);
+      updateFilterOptions(combined);
       alert('Плейлист обновлён!');
     })
-    .catch(() => alert('Ошибка загрузки плейлиста!'));
+    .catch(() => alert('Ошибка загрузки плейлистов!'));
 });
-
 // --- Фильтр по категориям ---
 categoryFilter.addEventListener("change", () => {
   const selected = categoryFilter.value;
