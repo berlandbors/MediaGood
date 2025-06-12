@@ -58,7 +58,7 @@ clearDbBtn.addEventListener("click", () => {
 
 // --- Кнопка загрузки плейлиста ---
 reloadBtn.addEventListener('click', () => {
-  fetch('playlist.json')
+  fetch('playlists.json')
     .then(res => res.json())
     .then(data => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
