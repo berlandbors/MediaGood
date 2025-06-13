@@ -230,7 +230,7 @@ sharePlayerBtn.addEventListener('click', function() {
   const cat = modalCategory.textContent;
   const poster = modalPoster.src || '';
   let text = '';
-  if (title) text += `🎬 ${title}\n`;
+  if (title) text += `СМОТРИ ОТ MediaGood: 🎬 ${title}\n`;
   if (poster) text += `ПОСТЕР: ${poster}\n`;
   if (cat) text += `КАТЕГОРИЯ: ${cat}\n`;
   if (desc) text += `ОПИСАНИЕ: ${desc}\n❗❗❗СМОТРИ 👀 ЗДЕСЬ⤵️:\n`;
