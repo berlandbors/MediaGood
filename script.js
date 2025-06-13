@@ -231,9 +231,9 @@ sharePlayerBtn.addEventListener('click', function() {
   const poster = modalPoster.src || '';
   let text = '';
   if (title) text += `🎬 ${title}\n`;
-  if (poster) text += `Постер: ${poster}\n`;
-  if (cat) text += `Категория: ${cat}\n`;
-  if (desc) text += `Описание: ${desc}\n❗❗❗СМОТРИ 👀 ЗДЕСЬ⤵️:\n`;
+  if (poster) text += `ПОСТЕР: ${poster}\n`;
+  if (cat) text += `КАТЕГОРИЯ: ${cat}\n`;
+  if (desc) text += `ОПИСАНИЕ: ${desc}\n❗❗❗СМОТРИ 👀 ЗДЕСЬ⤵️:\n`;
   if (navigator.share) {
     navigator.share({
       title: title,
